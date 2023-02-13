@@ -6,7 +6,12 @@ type TPerson = {
     age: number,
 };
 
-export class Person {
+export default class Person {
+
+    constructor() {
+        openDatabase();
+        this.createTablePerson();
+    }
 
 
     async createTablePerson() {
@@ -15,7 +20,7 @@ export class Person {
         });
     };
 
-    async listPeople() {
+    async getAll() {
         return openDatabase().then(query => {
             return query.all("SELECT * FROM pessoas")
                 .then(res => res);
