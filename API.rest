@@ -1,2 +1,14 @@
-#GET 
-http://localhost:3000/
+GET http://localhost:3000/users
+# Accept: application/json
+# Content-Type: application/json
+
+
+DELETE  http://localhost:3000/users/4
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name":"Olavio", 
+    "email":"asa@sapo.ao", 
+    "password": "aguinaldo"
+}
