@@ -1,14 +1,8 @@
-GET http://localhost:3000/users
-# Accept: application/json
-# Content-Type: application/json
-
-
-DELETE  http://localhost:3000/users/4
+POST http://localhost:3000/pessoa
 Accept: application/json
 Content-Type: application/json
 
 {
-    "name":"Olavio", 
-    "email":"asa@sapo.ao", 
-    "password": "aguinaldo"
+    "name":"Manucho",
+    "age": "12"
 }
