@@ -2,6 +2,17 @@
 import { Request, Response } from 'express';
 import Person from '../models/Person';
 import { StatusCodes } from 'http-status-codes';
+import * as yup from 'yup';
+
+interface IPerson {
+    name: string,
+    age: number
+}
+
+const yupSchema: yup.Schema<IPerson> = yup.object().shape({
+    name: yup.string().required().min(2),
+    age: yup.number().required()
+});
 
 export default class PersonController {
 
@@ -21,14 +32,24 @@ export default class PersonController {
     }
 
     async save(request: Request, response: Response) {
+        //const { name, age } = request.body;
 
-        const { name, age } = request.body;
+        let validatedData: IPerson | undefined = undefined;
 
-        if (!name) return response.status(StatusCodes.NO_CONTENT).json({ 'message': 'The name is required' });
-        if (!age) return response.status(StatusCodes.NO_CONTENT).json({ 'message': 'The age is required' });
+        try {
+            validatedData = await yupSchema.validate(request.body);
+        } catch (error) {
+            const yupError = error as yup.ValidationError;
+
+            return response.json({
+                errors: {
+                    default: yupError.message,
+                }
+            });
+        }
 
 
-        new Person().insertPerson({ name, age });
+        new Person().insertPerson(validatedData);
 
         return response.status(StatusCodes.CREATED).json({
             'message': 'Person Saved Successfully',
@@ -37,15 +58,27 @@ export default class PersonController {
 
     async update(request: Request, response: Response) {
         const { id } = request.params;
-        const { name, age } = request.body;
 
-        if (!id || !name || !age) {
-            return response.json({ 'message': 'Verifique os dados informados' });
+        let validatedData: IPerson | undefined = undefined;
+
+        try {
+            validatedData = await yupSchema.validate(request.body);
+        } catch (error) {
+            const yupError = error as yup.ValidationError;
+
+            return response.status(StatusCodes.BAD_REQUEST)
+                .json({
+                    errors: {
+                        default: yupError.message,
+                    }
+                });
         }
+
+
         const personExists = new Person().getPerson(Number(id));
         if (!personExists) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
 
-        new Person().updatePerson(Number(id), { name, age });
+        new Person().updatePerson(Number(id), validatedData);
 
         return response.status(201).json({ 'message': 'Person Updated Successfully' });
     }

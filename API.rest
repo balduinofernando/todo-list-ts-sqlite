@@ -1,8 +1,8 @@
-POST http://localhost:3000/pessoa
+GET http://localhost:3000/
 Accept: application/json
 Content-Type: application/json
 
 {
-    "name":"Manucho",
-    "age": "12"
+    "name": "Jack Ma",
+    "age": "52"
 }
