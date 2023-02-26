@@ -1,20 +1,23 @@
 import { Router } from 'express';
 import PersonController from './controllers/PersonController';
 import UserController from './controllers/UserController';
+import { checkJwt } from './shared/middlewares/authentication';
+import { AuthenticationController } from './controllers/AuthenticationController';
+const router = Router();
 
-const routes = Router();
+router.post('/login', new AuthenticationController().createToken);
 
-routes.get('/', new PersonController().index);
-routes.post('/pessoa', new PersonController().save);
-routes.get('/pessoa/:id', new PersonController().show);
-routes.put('/pessoa/:id', new PersonController().update);
-routes.delete('/pessoa/:id', new PersonController().delete);
+router.get('/', new PersonController().index);
+router.post('/pessoa', new PersonController().save);
+router.get('/pessoa/:id', new PersonController().show);
+router.put('/pessoa/:id', new PersonController().update);
+router.delete('/pessoa/:id', new PersonController().delete);
 
 // Users Routes
-routes.get('/users', new UserController().index);
-routes.post('/users', new UserController().save);
-routes.get('/users/:id', new UserController().show);
-routes.put('/users/:id', new UserController().update);
-routes.delete('/users/:id', new UserController().delete);
+router.get('/users', checkJwt, new UserController().index);
+router.post('/users', checkJwt, new UserController().save);
+router.get('/users/:id', checkJwt, new UserController().show);
+router.put('/users/:id', checkJwt, new UserController().update);
+router.delete('/users/:id', checkJwt, new UserController().delete);
 
-export default routes;
+export default router;
