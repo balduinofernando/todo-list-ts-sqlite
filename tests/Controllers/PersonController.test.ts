@@ -3,10 +3,14 @@ import { testServer } from '../jest.setup';
 
 describe('Person Controller', () => {
 
-    it('will list all people in the database', async () => {
-        const response = await testServer.get('/pessoa');
+    it('O endpoint de listar pessoas existe ', async () => {
+        const response = await (await testServer.get('/'));
+        expect(response.statusCode).toEqual(StatusCodes.OK);
+    });
 
-        expect(response.status).toEqual(StatusCodes.OK);
+    it(' vao ser listadas todas as pessoas em JSON ', async () => {
+        const response = await (await testServer.get('/'));
+        expect(response.type).toEqual('application/json');
     });
 
     it('uma pessoa vai ser adicionada', async () => {
