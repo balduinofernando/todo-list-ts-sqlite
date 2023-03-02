@@ -1,12 +1,13 @@
 
-import { openDatabase } from '../config/database';
+//import { openDatabase } from '../config/database';
 
-type TPerson = {
+export interface IPerson {
+    id: number,
     name: string,
     age: number,
-};
+}
 
-export default class Person {
+/* export default class Person {
 
     constructor() {
         openDatabase();
@@ -60,4 +61,4 @@ export default class Person {
                 console.log(error);
             });
     }
-}
+} */

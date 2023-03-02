@@ -1,13 +1,14 @@
-import { openDatabase } from '../config/database';
+//import { openDatabase } from '../config/database';
 
-type TUser = {
+export interface IUser {
     name: string,
     email: string,
     password: string,
     created_at?: string,
     updated_at?: string
-};
+}
 
+/* 
 export default class User {
     constructor() {
         openDatabase();
@@ -63,4 +64,4 @@ export default class User {
         });
     }
 
-}
+} */

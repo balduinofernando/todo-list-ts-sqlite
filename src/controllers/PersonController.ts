@@ -1,8 +1,10 @@
 
 import { Request, RequestHandler, Response } from 'express';
-import Person from '../models/Person';
+
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
+import { ETableNames } from '../database/ETableNames';
+import { database } from '../database/knex';
 
 interface IPerson {
     name: string,
@@ -17,9 +19,11 @@ const yupSchema: yup.Schema<IPerson> = yup.object().shape({
 export default class PersonController {
 
     async index(request: Request, response: Response) {
-        const people = await new Person().getAll();
+        const result = await database(ETableNames.people).select();
 
-        return response.json({ 'people': people });
+        return response.json({ people: result });
+
+        //return response.json({ 'people': people });
     }
 
     async show(request: Request, response: Response) {
@@ -27,7 +31,7 @@ export default class PersonController {
 
         if (!id) return response.json({ message: 'No id were specified' });
 
-        const person = await new Person().getPerson(Number(id));
+        const person = await database(ETableNames.people).where({ id });
         return response.json({ person });
     }
 
@@ -58,7 +62,7 @@ export default class PersonController {
         // let validatedData: IPerson | undefined = undefined;
         const { name, age } = request.body;
 
-        new Person().insertPerson({ name, age });
+        await database(ETableNames.people).insert({ name, age });
 
         return response.status(StatusCodes.CREATED).json({
             'message': 'Person Saved Successfully',
@@ -84,10 +88,10 @@ export default class PersonController {
         }
 
 
-        const personExists = new Person().getPerson(Number(id));
-        if (!personExists) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
+        const personExists = await database(ETableNames.people).where({ id }).first();
+        if (personExists.length < 0) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
 
-        new Person().updatePerson(Number(id), validatedData);
+        await database(ETableNames.people).where({ id }).update({ name: validatedData.name, age: validatedData.age });
 
         return response.status(201).json({ 'message': 'Person Updated Successfully' });
     }
@@ -97,10 +101,10 @@ export default class PersonController {
 
         if (!id) return response.json({ 'message': 'Nenhum ID foi Informado' });
 
-        const personExists = new Person().getPerson(Number(id));
-        if (!personExists) return response.status(404).json({ 'message': 'Não foi possível eliminar essa pessoa' });
+        const personExists = await database(ETableNames.people).where({ id }).first();
+        if (personExists.length < 0) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
 
-        new Person().deletePerson(Number(id));
+        await database(ETableNames.people).where({ id }).delete();
 
         return response.json({ 'message': 'Person Deleted Successfully' });
     }
