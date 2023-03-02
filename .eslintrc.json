@@ -20,7 +20,10 @@
     "rules": {
         "indent": [
             "error",
-            4
+            4,
+            {
+                "SwitchCase": 1
+            }
         ],
         "linebreak-style": [
             "error",
@@ -34,6 +37,7 @@
             "error",
             "always"
         ],
-        "@typescript-eslint/no-empty-interface": "off"   
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/ban-types": "off"   
     }
 }
