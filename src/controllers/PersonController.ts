@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
 import { ETableNames } from '../database/ETableNames';
 import { database } from '../database/knex';
+import { Person } from '../models';
 
 interface IPerson {
     name: string,
@@ -19,11 +20,9 @@ const yupSchema: yup.Schema<IPerson> = yup.object().shape({
 export default class PersonController {
 
     async index(request: Request, response: Response) {
-        const result = await database(ETableNames.people).select();
+        const result = await new Person().getAll();
 
         return response.json({ people: result });
-
-        //return response.json({ 'people': people });
     }
 
     async show(request: Request, response: Response) {
@@ -31,7 +30,14 @@ export default class PersonController {
 
         if (!id) return response.json({ message: 'No id were specified' });
 
-        const person = await database(ETableNames.people).where({ id });
+        const person = await new Person().getById(Number(id));
+
+        if (!person.length) {
+            return response.status(StatusCodes.NOT_FOUND).json({
+                message: 'Registro Não Encontrado'
+            });
+        }
+
         return response.json({ person });
     }
 

@@ -1,41 +1,26 @@
 
 //import { openDatabase } from '../config/database';
 
+import { ETableNames } from '../database/ETableNames';
+import { database } from '../database/knex';
+
 export interface IPerson {
     id: number,
     name: string,
     age: number,
 }
 
-/* export default class Person {
-
-    constructor() {
-        openDatabase();
-        this.createTablePerson();
-    }
-
-
-    async createTablePerson() {
-        await openDatabase().then(query => {
-            query.exec('CREATE TABLE IF NOT EXISTS pessoas(id INTEGER PRIMARY KEY, nome TEXT, idade INTEGER)');
-        });
-    }
+export class Person {
 
     async getAll() {
-        return openDatabase().then(query => {
-            return query.all('SELECT * FROM pessoas')
-                .then(res => res);
-        });
+        return await database(ETableNames.people).select('*');
     }
 
-    async getPerson(id: number) {
-        return openDatabase().then(query => {
-            return query.get('SELECT * FROM pessoas WHERE id=?', [id])
-                .then(res => res);
-        });
+    async getById(id: number) {
+        return await database(ETableNames.people).where({ id });
     }
 
-    async insertPerson(person: TPerson) {
+    /*async insertPerson(person: TPerson) {
         await openDatabase()
             .then((query) => {
                 query.run('INSERT INTO pessoas (nome, idade) VALUES (?,?)', [person.name, person.age]);
@@ -60,5 +45,5 @@ export interface IPerson {
             }).catch(error => {
                 console.log(error);
             });
-    }
-} */
+    } */
+}
