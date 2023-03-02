@@ -8,7 +8,7 @@ const router = Router();
 router.post('/login', new AuthenticationController().createToken);
 
 router.get('/', new PersonController().index);
-router.post('/pessoa', new PersonController().save);
+router.post('/pessoa', new PersonController().bodyValidator, new PersonController().save);
 router.get('/pessoa/:id', new PersonController().show);
 router.put('/pessoa/:id', new PersonController().update);
 router.delete('/pessoa/:id', new PersonController().delete);

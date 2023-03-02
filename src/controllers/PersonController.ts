@@ -1,5 +1,5 @@
 
-import { Request, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import Person from '../models/Person';
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
@@ -31,13 +31,10 @@ export default class PersonController {
         return response.json({ person });
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    async save(request: Request<{}, {}, IPerson>, response: Response) {
-
-        let validatedData: IPerson | undefined = undefined;
-
+    bodyValidator: RequestHandler = async (request, response, next) => {
         try {
-            validatedData = await yupSchema.validate(request.body, { abortEarly: false });
+            await yupSchema.validate(request.body, { abortEarly: false });
+            return next();
         } catch (error) {
 
             const yupError = error as yup.ValidationError;
@@ -52,14 +49,21 @@ export default class PersonController {
 
             return response.status(StatusCodes.BAD_REQUEST).json({ errors });
         }
+    };
 
 
-        new Person().insertPerson(validatedData);
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    save: RequestHandler = async (request: Request<{}, {}, IPerson>, response: Response) => {
+
+        // let validatedData: IPerson | undefined = undefined;
+        const { name, age } = request.body;
+
+        new Person().insertPerson({ name, age });
 
         return response.status(StatusCodes.CREATED).json({
             'message': 'Person Saved Successfully',
         });
-    }
+    };
 
     async update(request: Request, response: Response) {
         const { id } = request.params;
