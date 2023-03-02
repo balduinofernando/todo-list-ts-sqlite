@@ -1,0 +1,1 @@
+import './src/database/knex/Environment';

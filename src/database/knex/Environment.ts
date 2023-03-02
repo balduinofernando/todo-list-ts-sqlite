@@ -5,7 +5,7 @@ export const development: Knex.Config = {
     client: 'better-sqlite3',
     useNullAsDefault: true,
     connection: {
-        filename: `${process.env.SQLITE_FILE_NAME}` || path.resolve(__dirname, '..', 'banco.sqlite'),
+        filename: path.resolve(__dirname, '..', 'banco.sqlite'),
     },
     migrations: {
         directory: path.resolve(__dirname, '..', 'migrations'),
@@ -16,9 +16,8 @@ export const development: Knex.Config = {
         extension: 'ts',
     },
     pool: {
-        // eslint-disable-next-line @typescript-eslint/ban-types
         afterCreate: (connection: any, done: Function) => {
-            connection.run('PRAGMA foreign_keys = ON');
+            connection.pragma('foreign_keys = ON');
             done();
         }
     }
