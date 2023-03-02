@@ -31,21 +31,26 @@ export default class PersonController {
         return response.json({ person });
     }
 
-    async save(request: Request, response: Response) {
-        //const { name, age } = request.body;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    async save(request: Request<{}, {}, IPerson>, response: Response) {
 
         let validatedData: IPerson | undefined = undefined;
 
         try {
-            validatedData = await yupSchema.validate(request.body);
+            validatedData = await yupSchema.validate(request.body, { abortEarly: false });
         } catch (error) {
-            const yupError = error as yup.ValidationError;
 
-            return response.json({
-                errors: {
-                    default: yupError.message,
+            const yupError = error as yup.ValidationError;
+            const errors: Record<string, string> = {};
+
+            yupError.inner.forEach(error => {
+                if (error.path) {
+                    errors[error.path] = error.message;
                 }
+
             });
+
+            return response.status(StatusCodes.BAD_REQUEST).json({ errors });
         }
 
 

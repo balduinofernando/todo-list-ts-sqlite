@@ -1,7 +1,11 @@
-GET http://localhost:3000/users/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo2LCJuYW1lIjoiQmFsZHVpbm8gRmVybmFuZG8iLCJlbWFpbCI6ImJhbGR1aW5vQHNhcG8uYW8iLCJwYXNzd29yZCI6IiQyYiQxMCREenZIOHhTVWJhcFA1NWpLUTNLYUFlRHJnMUw5cnZIT3d5eDRka1pFa2hQWlJWeVVEZzRVVyIsImNyZWF0ZWRfYXQiOiIxNjc3Mjc5NzUwNTEwLjAiLCJ1cGRhdGVkX2F0IjoiMTY3NzI3OTc1MDUxMC4wIn0sImlhdCI6MTY3NzQwNDI2NCwiZXhwIjoxNjc3NDA0Mjk0fQ.zYlmen29MjzqAmwa5oBoArQzyPC0SLxBCmp-5aqnDCE
+POST http://localhost:3000/pessoa
 Accept: application/json
 Content-Type: application/json
+
+{
+    //"name":"a",
+    //"age":"48"
+}
 
 
 ###
