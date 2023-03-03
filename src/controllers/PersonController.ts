@@ -28,7 +28,7 @@ export default class PersonController {
     async show(request: Request, response: Response) {
         const { id } = request.params;
 
-        if (!id) return response.json({ message: 'No id were specified' });
+        if (!id) return response.json({ message: 'No id was specified' });
 
         const person = await new Person().getById(Number(id));
 
