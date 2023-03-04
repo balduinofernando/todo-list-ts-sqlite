@@ -1,6 +1,3 @@
-
-//import { openDatabase } from '../config/database';
-
 import { ETableNames } from '../database/ETableNames';
 import { database } from '../database/knex';
 
@@ -12,7 +9,7 @@ export interface IPerson {
 
 export class Person {
 
-    async getAll() {
+    async get() {
         return await database(ETableNames.people).select('*');
     }
 
@@ -20,30 +17,17 @@ export class Person {
         return await database(ETableNames.people).where({ id });
     }
 
-    /*async insertPerson(person: TPerson) {
-        await openDatabase()
-            .then((query) => {
-                query.run('INSERT INTO pessoas (nome, idade) VALUES (?,?)', [person.name, person.age]);
-            }).catch(error => {
-                console.log(error);
-            });
+    async insert({ name, age }: Omit<IPerson, 'id'>) {
+        await database(ETableNames.people).insert({ name, age });
     }
 
-    async updatePerson(id: number, person: TPerson) {
-        await openDatabase()
-            .then((query) => {
-                query.run('UPDATE pessoas SET nome=?, idade=? WHERE id=? ', [person.name, person.age, id]);
-            }).catch(error => {
-                console.log(error);
-            });
+    async update(id: number, { name, age }: Omit<IPerson, 'id'>) {
+        await database(ETableNames.people).update({
+            name, age
+        }).where({ id });
     }
 
-    async deletePerson(id: number) {
-        await openDatabase()
-            .then((query) => {
-                query.run('DELETE FROM pessoas WHERE id=? ', id);
-            }).catch(error => {
-                console.log(error);
-            });
-    } */
+    async delete(id: number) {
+        await database(ETableNames.people).where({ id }).delete();
+    }
 }

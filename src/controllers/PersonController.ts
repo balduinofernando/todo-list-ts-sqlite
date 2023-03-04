@@ -20,7 +20,7 @@ const yupSchema: yup.Schema<IPerson> = yup.object().shape({
 export default class PersonController {
 
     async index(request: Request, response: Response) {
-        const result = await new Person().getAll();
+        const result = await new Person().get();
 
         return response.json({ people: result });
     }
@@ -61,17 +61,14 @@ export default class PersonController {
         }
     };
 
-
-    // eslint-disable-next-line @typescript-eslint/ban-types
     save: RequestHandler = async (request: Request<{}, {}, IPerson>, response: Response) => {
 
-        // let validatedData: IPerson | undefined = undefined;
         const { name, age } = request.body;
-
-        await database(ETableNames.people).insert({ name, age });
+        const result = await new Person().insert({ name, age });
 
         return response.status(StatusCodes.CREATED).json({
             'message': 'Person Saved Successfully',
+            result
         });
     };
 
@@ -95,11 +92,16 @@ export default class PersonController {
 
 
         const personExists = await database(ETableNames.people).where({ id }).first();
-        if (personExists.length < 0) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
+        if (!personExists) {
+            return response.status(StatusCodes.NOT_FOUND).json({
+                error: 'Person Not Found'
+            });
+        }
 
-        await database(ETableNames.people).where({ id }).update({ name: validatedData.name, age: validatedData.age });
 
-        return response.status(201).json({ 'message': 'Person Updated Successfully' });
+        await new Person().update(Number(id), { name: validatedData.name, age: validatedData.age });
+
+        return response.status(StatusCodes.ACCEPTED).json({ 'message': 'Person Updated Successfully' });
     }
 
     async delete(request: Request, response: Response) {
@@ -108,11 +110,15 @@ export default class PersonController {
         if (!id) return response.json({ 'message': 'Nenhum ID foi Informado' });
 
         const personExists = await database(ETableNames.people).where({ id }).first();
-        if (personExists.length < 0) return response.status(404).json({ 'message': 'Não foi possivel atualizar os dados' });
+        if (personExists.length < 0) return response.status(StatusCodes.NOT_FOUND).json({ 'message': 'Person not found' });
 
-        await database(ETableNames.people).where({ id }).delete();
+        await new Person().delete(Number(id)).then(() => {
 
-        return response.json({ 'message': 'Person Deleted Successfully' });
+            return response.status(StatusCodes.NO_CONTENT).json({ 'message': 'Person Deleted Successfully' });
+        }).catch(error => {
+            return response.json({ 'message': error });
+        });
+
     }
 
 }

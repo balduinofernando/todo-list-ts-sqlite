@@ -1,49 +1,11 @@
-GET http://localhost:3000/
-Content-Type: application/json
+GET http://localhost:3000/todos
 
 ###
-
-POST http://localhost:3000/pessoa
-Accept: application/json
-Content-Type: application/json
+POST http://localhost:3000/todos
+Content-Type: "application/json"
 
 {
-    "name":"Fernando",
-    "age":29
+    "user_id":1,
+    "task_name":"Terminar as Features",
+    "status":"In Progress"
 }
-
-
-###
-
-GET http://localhost:3000/pessoa/2
-Accept: application/json
-Content-Type: application/json
-
-###
-
-PUT http://localhost:3000/pessoa/2
-Accept: application/json
-Content-Type: application/json
-
-{
-    "name":"Balduino Fernando",
-    "age":29
-}
-
-###
-
-DELETE http://localhost:3000/pessoa/1
-Accept: application/json
-Content-Type: application/json
-
-###
-
-POST http://localhost:3000/login
-Accept: application/json
-Content-Type: application/json
-
-{
-    "email":"balduino@sapo.ao",
-    "password":"fernando"
-}
-    

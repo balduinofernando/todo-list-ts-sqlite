@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
         table.foreign('user_id').references('id').inTable('users');
         table.string('task_name').notNullable();
         table.enum('status', ['In Progress', 'Completed', 'Declined']);
+        table.timestamps();
 
         table.comment('Tabela para armazenar tarefas');
     }).then(() => {

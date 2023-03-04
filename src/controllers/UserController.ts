@@ -1,32 +1,76 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import User from '../models/User';
 import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
-
+import * as yup from 'yup';
 
 interface IUser {
     id: number,
-    name: string, email: string
+    name: string,
+    email: string,
+    password: string,
+    created_at?: string,
+    updated_at?: string
 }
+
+const userValidationSchema = yup.object().shape({
+    name: yup.string().required().min(2),
+    email: yup.string().email().required(),
+    password: yup.string().min(8).max(255).required()
+});
+
 export default class UserController {
 
+    bodyValidator: RequestHandler = async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            await userValidationSchema.validate(request.body, { abortEarly: false });
+            return next();
+        } catch (error) {
+
+            const yupError = error as yup.ValidationError;
+            const errors: Record<string, string> = {};
+
+            yupError.inner.forEach(error => {
+                if (error.path) {
+                    errors[error.path] = error.message;
+                }
+
+            });
+
+            return response.status(StatusCodes.BAD_REQUEST).json({ errors });
+        }
+    };
 
     async index(request: Request, response: Response) {
-
-        const users = await new User().getAll();
-
+        const users = await new User().all();
         return response.json({ 'users': users });
     }
 
     async save(request: Request, response: Response) {
 
         const saltRounds = 10;
+        const { name, email, password }: IUser = request.body;
 
-        const { name, email, password } = request.body;
+        const emailExists = await new User().getByEmail(email);
 
-        if (!name) return response.json({ message: 'Informe o nome do usuário' });
-        if (!email) return response.json({ message: 'Informe o email do usuário' });
-        if (!password) return response.json({ message: 'Informe a palavra passe' });
+        if (emailExists) {
+            return response.status(StatusCodes.CONFLICT).json({
+                message: 'A user with this e-mail already exists'
+            });
+        }
+
+        try {
+            await userValidationSchema.validate({ name, email, password });
+        } catch (error) {
+            const yupError = error as yup.ValidationError;
+
+            return response.status(StatusCodes.BAD_REQUEST)
+                .json({
+                    errors: {
+                        default: yupError.message,
+                    }
+                });
+        }
 
         const hashPassword = await bcrypt.hashSync(password, saltRounds);
 
@@ -38,32 +82,42 @@ export default class UserController {
     async show(request: Request, response: Response) {
         const { id } = request.params;
 
-        const user = await new User().getUser(Number(id));
+        const user: IUser = await new User().getById(Number(id));
 
         if (!user) {
-            return response.status(StatusCodes.NOT_FOUND).json({ 'message': 'User Not Found' });
+            return response.status(StatusCodes.NOT_FOUND).json({ 'message': 'Record Not Found' });
         }
 
-        const { id: user_id, name, email, created_at } = user;
-
-
-        return response.status(StatusCodes.OK).json({ user_id, name, email, created_at });
+        return response.status(StatusCodes.OK).json({ name: user.name, email: user.email, created_at: user.created_at, updated_at: user.updated_at });
 
     }
 
     async update(request: Request, response: Response) {
         const { id } = request.params;
         const { name, email, password } = request.body;
-
         if (!Number(id)) return response.json({ message: 'ID não Informado' });
 
-        const userExists = await new User().getUser(Number(id));
+        // Ckeck if user with informed email exists
+        try {
+            const validatedFields = userValidationSchema.validate({ name, email, password });
+        } catch (error) {
+            const yupError = error as yup.ValidationError;
 
-        if (!userExists) return response.json({ message: 'Usuário não encontrado', statusCode: response.statusCode });
+            return response.status(StatusCodes.BAD_REQUEST)
+                .json({
+                    errors: {
+                        default: yupError.message,
+                    }
+                });
+        }
+
+        const userExists = await new User().getById(Number(id));
+
+        if (!userExists) return response.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário não encontrado', });
 
         await new User().update(Number(id), { name, email, password });
 
-        return response.json({ message: 'Dados de usuário atualizados' });
+        return response.status(StatusCodes.OK).json({ message: 'Dados de usuário atualizados' });
     }
 
     async delete(request: Request, response: Response) {
@@ -71,13 +125,13 @@ export default class UserController {
 
         if (!id) return response.json({ message: 'Informe um usuário' });
 
-        const userExists = await new User().getUser(Number(id));
+        const userExists = await new User().getById(Number(id));
 
-        if (!userExists) return response.json({ message: 'Usuário não encontrado' });
+        if (!userExists) return response.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário não encontrado' });
 
         await new User().delete(Number(id));
 
-        return response.json({
+        return response.status(StatusCodes.ACCEPTED).json({
             message: 'User Deleted'
         });
     }

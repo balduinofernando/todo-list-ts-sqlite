@@ -7,6 +7,7 @@ export async function up(knex: Knex): Promise<void> {
         table.bigIncrements('id').primary().index();
         table.string('name', 100);
         table.integer('age', 3);
+        table.timestamps();
 
         table.comment('Tabela usada para cadastrar pessoas');
     }).then(() => {
