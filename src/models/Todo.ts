@@ -5,13 +5,13 @@ export interface ITodo {
     id: number,
     user_id: number,
     task_name: string,
-    status: ETodoStatus,
+    status: string | ETodoStatus,
 }
 
 export enum ETodoStatus {
-    inProress = 'In Progress',
+    inProgress = 'In Progress',
     completed = 'Completed',
-    ceclined = 'Declined'
+    declined = 'Declined'
 }
 
 export class Todo {
@@ -28,7 +28,7 @@ export class Todo {
     }
 
     async update(id: number, { user_id, task_name, status }: Omit<ITodo, 'id'>) {
-        await database(ETableNames.todos).update({ user_id, task_name, status }).where({ id });
+        await database(ETableNames.todos).update({ user_id, task_name, status, updated_at: new Date }).where({ id });
     }
 
     async delete(id: number) {

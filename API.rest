@@ -2,10 +2,27 @@ GET http://localhost:3000/todos
 
 ###
 POST http://localhost:3000/todos
-Content-Type: "application/json"
+Content-Type: application/json
 
 {
     "user_id":1,
-    "task_name":"Terminar as Features",
-    "status":"In Progress"
+    "task_name":"Merge Conflicts",
+    "status":"Declined"
 }
+
+###
+PUT http://localhost:3000/todos/3
+Content-Type: application/json
+
+{
+    "user_id":1,
+    "task_name":"Fazer Merge dos Conflitos",
+    "status":"Declined"
+}
+
+###
+GET http://localhost:3000/todos/1
+
+
+###
+DELETE http://localhost:3000/todos/1
