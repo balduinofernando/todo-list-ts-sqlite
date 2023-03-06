@@ -1,4 +1,5 @@
 //import { Knex } from 'knex';
+import { hash } from 'bcrypt';
 import { ETableNames } from '../ETableNames';
 import { database } from '../knex';
 
@@ -7,9 +8,7 @@ export async function seed(knex: any): Promise<void> {
     await database(ETableNames.people).del();
 
     // Inserts seed entries
-    await database(ETableNames.people).insert([
-        { id: 1, name: 'André', age: 17 },
-        { id: 1, name: 'Marcos', age: 40 },
-        { id: 1, name: 'Soraia', age: 25 },
+    await database(ETableNames.users).insert([
+        { id: 1, name: 'Balduino', email: 'balduino@sapo.ao', password: (await hash('fernando', 10)).toString() },
     ]);
 }

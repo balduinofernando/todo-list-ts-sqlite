@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 import { ETableNames } from '../ETableNames';
 
-
 export async function up(knex: Knex): Promise<void> {
     return await knex.schema.createTable(ETableNames.todos, table => {
         table.bigIncrements('id', { primaryKey: true }).index();
@@ -13,14 +12,13 @@ export async function up(knex: Knex): Promise<void> {
 
         table.comment('Tabela para armazenar tarefas');
     }).then(() => {
-        console.log(`# Migrated ${ETableNames.todos} Table`);
+        // console.info(`# Migrated ${ETableNames.todos} Table`);
     });
 }
 
-
 export async function down(knex: Knex): Promise<void> {
     return await knex.schema.dropTable(ETableNames.todos).then(() => {
-        console.log(`# Dropped ${ETableNames.todos} Table`);
+        // console.info(`# Dropped ${ETableNames.todos} Table`);
     });
 }
 

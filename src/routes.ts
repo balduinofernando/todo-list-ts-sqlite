@@ -22,7 +22,7 @@ router.put('/users/:id', new UserController().update);
 router.delete('/users/:id', new UserController().delete);
 //router.delete('/users/:id', checkJwt, new UserController().delete);
 
-router.get('/todos', new TodoController().index);
+router.get('/todos', checkJwt, new TodoController().index);
 router.post('/todos', new TodoController().store);
 router.get('/todos/:id', new TodoController().show);
 router.put('/todos/:id', new TodoController().update);

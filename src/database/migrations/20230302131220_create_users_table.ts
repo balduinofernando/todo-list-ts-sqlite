@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 import { ETableNames } from '../ETableNames';
 
-
 export async function up(knex: Knex): Promise<void> {
     return await knex.schema
         .createTable(ETableNames.users, table => {
@@ -14,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
             table.comment('Tabela para os usuários do sistema');
         })
         .then(() => {
-            console.log(`# Migrated ${ETableNames.users} Table`);
+            // console.info(`# Migrated ${ETableNames.users} Table`);
         });
 }
 
@@ -22,7 +21,7 @@ export async function down(knex: Knex): Promise<void> {
     return await knex.schema
         .dropTable(ETableNames.users)
         .then(() => {
-            console.log(`# Dropped ${ETableNames.users} Table`);
+            // console.info(`# Dropped ${ETableNames.users} Table`);
         });
 }
 

@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --transpile-only src/index.ts",
-    "test": "jest"
+    "test": "jest --detectOpenHandles --forceExit --verbose"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",

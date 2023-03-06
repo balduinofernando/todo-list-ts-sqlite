@@ -2,6 +2,7 @@ import { ETableNames } from '../database/ETableNames';
 import { database } from '../database/knex';
 
 export interface IUser {
+    id?: number,
     name: string,
     email: string,
     password: string,
