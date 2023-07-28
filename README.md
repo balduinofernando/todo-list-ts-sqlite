@@ -9,3 +9,4 @@ This To-do list is a process of learning TypeScript
 - NodeJS
 - TypeScript
 - SQLite
+- Jest for testing
